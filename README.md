@@ -12,9 +12,11 @@ Targeted at search-and-rescue missions where pure ground robots get stuck and pu
 
 ## Demo
 
-<!-- Drag-and-drop reconfig_demo.mp4 here in the GitHub web editor to embed -->
 
-https://github.com/tarunkumarnyu/Reconfigurable-UAV-UGV/raw/main/assets/reconfig_demo.mp4
+
+https://github.com/user-attachments/assets/98f587c6-136c-463c-a7f6-8aad75f0b5d4
+
+
 
 ## Configurations
 
