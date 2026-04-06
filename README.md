@@ -1,9 +1,10 @@
 # Reconfigurable UAV + UGV
 
-[![Status](https://img.shields.io/badge/Status-Built%20%26%20Flown-1D9E75)](#)
-[![Inspiration](https://img.shields.io/badge/Inspired%20by-CalTech%20M4%20Morphbot-4A90D9)](https://www.caltech.edu/about/news/caltech-engineers-design-a-robot-that-can-walk-fly-and-skateboard)
+[![Type](https://img.shields.io/badge/Type-Design%20Project-4A90D9)](#)
+[![Inspiration](https://img.shields.io/badge/Inspired%20by-CalTech%20M4%20Morphbot-1D9E75)](https://www.caltech.edu/about/news/caltech-engineers-design-a-robot-that-can-walk-fly-and-skateboard)
 [![Flight Controller](https://img.shields.io/badge/FC-STM32F405-D85A30)](#)
-[![Frame](https://img.shields.io/badge/Frame-PLA%2B%20%2B%20Carbon%20Fibre-666)](#)
+
+> **Design project.** This repository documents the mechanical design, sizing, structural analysis, and electronics architecture of the vehicle. It is a CAD + analysis effort, not a software stack.
 
 A hybrid robot that morphs between **quadrotor (UAV)** and **two-wheeled rover (UGV)** modes — inspired by the CalTech M4 Morphbot. The vehicle flies to a search location for rapid response, then transitions to ground mode in cluttered terrain to gain manoeuvrability and dramatically cut power consumption (dynamically stable → statically stable).
 
@@ -200,4 +201,4 @@ Built, flown, and ground-driven. Reconfiguration is mechanical (servo-driven), G
 
 ## Credits
 
-Concept inspired by the CalTech **M4 Morphbot**. Mechanical design, electronics integration, and bring-up by Tarunkumar Palanivelan. Sizing, FEA, and CG analysis are taken from the project's IEEE-format technical report (*Development of Hybrid Integrated UGV-UAV*).
+Concept inspired by the CalTech **M4 Morphbot**. Mechanical design, electronics integration, and bring-up by Tarunkumar Palanivelan.
