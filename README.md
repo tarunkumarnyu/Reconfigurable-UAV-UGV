@@ -48,6 +48,51 @@ Total of **8 actuators**: 4 BLDC + 2 DC + 2 servos.
   <img src="assets/sizing.png" width="85%" alt="Dimensions and sizing"/>
 </p>
 
+<p align="center">
+  <img src="assets/analysis/wheelbase_top.png" width="60%" alt="Top view — wheelbase and propeller clearance"/>
+</p>
+
+## Sizing & Power Budget
+
+The vehicle was sized from a target take-off weight, then back-solved through thrust, power, and endurance.
+
+**Weight estimation.**
+
+```
+W_to = W_oe + W_pl + W_f
+W_oe = 345 g (frame) + 630 g (electronics, no battery) = 975 g
+W_f  = 225 g (battery, treated as fuel weight)
+W_to = 975 + 225 = 1200 g
+```
+
+**Thrust estimation.** Hover requires thrust = weight; we add a 20 % margin for control authority.
+
+```
+T_required = 1.2 × 1200 g = 1440 g
+T_per_motor = 1440 / 4 = 360 g
+```
+
+**Power estimation.** From a test-stand measurement at hover thrust per motor: 3.5 A @ 25.2 V → 88.2 W per motor.
+
+```
+P_motors = 4 × 88.2 W = 352.8 W
+P_avionics ≈ 20 W
+P_total ≈ 373 W
+E_5min  = 373 W × (5/60) h = 31.08 Wh
+```
+
+**Battery selection.** A **6S 1300 mAh 150C LiPo** delivers 1.3 Ah × 25.2 V = **32.76 Wh**, leaving a small margin over the 31.08 Wh budget.
+
+**Endurance** (capping discharge at 80 % to protect the LiPo):
+
+```
+P/W   = 373 / 1.2 ≈ 310.83 W/kg
+I_avg = (1.2 × 310.83) / 25.2 ≈ 14.80 A
+t     = (1.3 Ah × 0.8) / 14.80 A ≈ 0.0703 h ≈ 4.22 min
+```
+
+The 4.22 min UAV endurance is the **worst case** (continuous hover). UGV mode draws an order of magnitude less because the platform is statically stable on its wheels — this is the entire reason for the hybrid design.
+
 ## System Architecture
 
 <p align="center">
@@ -93,6 +138,55 @@ The frame has three structural sub-assemblies: **central body**, **motor-mount b
   <img src="assets/topology.png" width="48%" alt="Topology optimisation result"/>
 </p>
 
+<p align="center">
+  <img src="assets/analysis/gear_assembly.png" width="70%" alt="Wheel gears, DC motor, common gear assembly"/>
+</p>
+
+## Centre of Gravity
+
+The CG is held close to the geometric centre of the frame by anchoring the battery (the heaviest single item) to the bottom of the central body. There is a deliberate **CG shift between modes**:
+
+- **UAV mode** — CG is ~5 mm above the top of the central structure.
+- **UGV mode** — CG is ~2 mm above the bottom of the central structure.
+
+The two CG positions differ by ~23 mm (20 mm of which is the central plate thickness). In flight that puts the CG slightly *above* the rotor plane for predictable handling; on the ground it sits *below* the wheel axles, giving a low static stability margin against tipping.
+
+<p align="center">
+  <img src="assets/analysis/cg_uav_ugv.png" width="85%" alt="CG estimation in UAV and UGV modes"/>
+</p>
+
+## Structural Analysis (FEA)
+
+Static structural analysis was run in **Autodesk Fusion 360 Simulation** on the load-bearing parts. Loads are taken from worst-case flight forces (per-motor thrust + dynamic factor).
+
+**Motor-arm beam.** Fixed at the centre (servo mount) with **20 N applied at each BLDC mounting hole**. Maximum von Mises stress is **5.742 MPa**, located between the servo and the BLDC mount — the expected stress concentration where the arm transitions from the servo coupling to the motor cantilever.
+
+<p align="center">
+  <img src="assets/analysis/fea_motor_arm.png" width="85%" alt="Motor arm beam FEA — max 5.742 MPa"/>
+</p>
+
+**Central structure (servo rear mount).** Fixed at the flight-controller mounting holes with **40 N per side** at the servo mounting holes (each side carries two BLDC motors at 20 N each). Maximum stress is **0.5 MPa** — a very high factor of safety, deliberately so since this part holds the entire reconfiguration mechanism.
+
+<p align="center">
+  <img src="assets/analysis/fea_central_structure.png" width="85%" alt="Central structure FEA — max 0.5 MPa"/>
+</p>
+
+**Landing gear.** Skid type, chosen for stability and ground-contact area. Topology-optimised under landing-load constraints to maximise strength-to-weight. Maximum stress in the optimised geometry is **0.6 MPa**.
+
+<p align="center">
+  <img src="assets/analysis/fea_landing_gear.png" width="85%" alt="Landing gear FEA — max 0.6 MPa"/>
+</p>
+
+The landing-gear height (50 mm) is also constrained to be **smaller than the outer wheel radius**, so it never touches the ground in UGV mode — a 15 mm clearance is maintained throughout ground motion.
+
+## Aerodynamics — Wheel Drag
+
+Because the wheels stay on the airframe in UAV mode, their cross-section adds parasitic drag. Streamline analysis on the topology-optimised wheel shows the gear-tooth ring acts as a (mild) bluff body but the open spoke pattern lets most of the flow through, which was the goal of the optimisation:
+
+<p align="center">
+  <img src="assets/analysis/cfd_wheel.png" width="65%" alt="Streamline visualisation over the wheel"/>
+</p>
+
 ## Why a hybrid platform
 
 A pure quadrotor wastes energy hovering and is unsafe near survivors and rubble. A pure ground robot can't cross gaps, climb collapsed slabs, or be deployed quickly across a wide search area. The reconfigurable approach uses each mode where it's actually efficient:
@@ -106,4 +200,4 @@ Built, flown, and ground-driven. Reconfiguration is mechanical (servo-driven), G
 
 ## Credits
 
-Concept inspired by the CalTech **M4 Morphbot**. Mechanical design, electronics integration, and bring-up by Tarunkumar Palanivelan.
+Concept inspired by the CalTech **M4 Morphbot**. Mechanical design, electronics integration, and bring-up by Tarunkumar Palanivelan. Sizing, FEA, and CG analysis are taken from the project's IEEE-format technical report (*Development of Hybrid Integrated UGV-UAV*).
